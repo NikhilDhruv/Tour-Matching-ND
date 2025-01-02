@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}
+Loading
+{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column justify-content-center align-items-center mt-4">
+    <h2>Loading...</h2>
+    <p>Please wait while matches are being generated with AI.</p>
+    <div id="log-container" class="bg-light p-3 mt-3" style="width: 80%; max-width: 600px; height: 200px; overflow-y: auto; border: 1px solid #ccc; border-radius: 5px;">
+        <p id="log-placeholder" class="text-muted">Logs will appear here...</p>
+    </div>
+    <div id="download-container"></div> <!-- Added for error messages -->
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function appendLog(message) {
+        const logContainer = document.getElementById("log-container");
+        const logPlaceholder = document.getElementById("log-placeholder");
+
+        // Remove placeholder if logs are being added
+        if (logPlaceholder) {
+            logPlaceholder.remove();
+        }
+
+        // Create a new log entry
+        const logEntry = document.createElement("p");
+        logEntry.textContent = message;
+        logEntry.classList.add("mb-1"); // Add a small margin
+
+        // Append the log entry
+        logContainer.appendChild(logEntry);
+
+        // Scroll to the bottom to show the latest log
+        logContainer.scrollTop = logContainer.scrollHeight;
+    }
+
+    function checkTaskStatus(taskId) {
+        appendLog("Checking task status for Task ID: " + taskId);
+
+        fetch(`/task_status/${taskId}`)
+            .then(response => {
+                appendLog("Received response from /task_status: " + response.status);
+                return response.json();
+            })
+            .then(data => {
+                appendLog("Parsed JSON data: " + JSON.stringify(data));
+                if (data.status === "SUCCESS") {
+                    appendLog("Task succeeded. Redirecting to: " + data.redirect_url);
+                    window.location.href = data.redirect_url;
+                } else if (data.status === "FAILURE") {
+                    appendLog("Task failed with error: " + data.error);
+                    const container = document.getElementById("download-container");
+                    container.innerHTML = `<p class="text-danger">Task failed: ${data.error}</p>`;
+                } else {
+                    appendLog("Task still running. Retrying in 2 seconds...");
+                    setTimeout(() => checkTaskStatus(taskId), 2000);
+                }
+            })
+            .catch(error => {
+                appendLog("Error during fetch or JSON parsing: " + error.message);
+                alert("An error occurred while checking task status. Please try again.");
+            });
+    }
+
+    // Start checking task status
+    checkTaskStatus("{{ task_id }}");
+</script>
+{% endblock %}

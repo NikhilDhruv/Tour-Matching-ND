@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}
+Tour Guide Matching
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Tour Guide Matching</h1>
+    <form action="/match_students" method="post" enctype="multipart/form-data">
+        <div class="row mt-4">
+            <div class="col-md-5">
+                <div class="upload-card border rounded p-3 shadow-sm bg-light">
+                    <h5>Upload data on prospective students</h5>
+                    <input type="file" id="prospectiveStudentsFile" name="prospective_students_file" class="form-control mb-3 mt-3 p-1" accept=".csv">
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="upload-card border rounded p-3 shadow-sm bg-light">
+                    <h5>Upload data on current students</h5>
+                    <input type="file" id="currentStudentsFile" name="current_students_file" class="form-control mb-3 mt-3 p-1" accept=".csv">
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col text-left">
+                <button type="submit" class="btn btn-danger">Match Students</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
