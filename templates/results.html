@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}
+Tour Guide Matching Results
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Tour Guide Matching Results</h1>
+    <p class="mt-4">Your matches have been generated successfully. You can download the CSV file below:</p>
+
+    <!-- Download and Generate More Matches -->
+    <div class="mt-4">
+        <a href="{{ url_for('download_file', filename=filename) }}" class="btn btn-primary">Download Matched Students CSV</a>
+        <a href="/" class="btn btn-secondary">Generate More Matches</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script>
+    // Confetti on page load
+    window.onload = function () {
+        confetti({
+            particleCount: 200,
+            spread: 100,
+            origin: { y: 0.6 } // Adjust where the confetti starts
+        });
+    };
+</script>
+{% endblock %}
